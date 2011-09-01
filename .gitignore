@@ -1,0 +1,25 @@
+*.dep
+*.obj
+*.swp
+*.kate-swp
+*.*~
+*thumbs.db
+*.cmake
+*.png
+/minirt
+
+/.kdev4/
+
+/bin/*
+CMakeCache.txt
+
+CMakeFiles/
+
+# compiled object files
+*.o
+
+# compiled dynamic libraries
+*.so
+
+# compiled static libraries
+*.a
