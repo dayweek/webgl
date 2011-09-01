@@ -3,9 +3,89 @@
   <head>
     <meta charset="utf-8">
     <title>opengl</title>
+<script src="src/mjs.js"></script>
+<script src="src/utils.js"></script>
   </head>
   <body>
 <script>
+var horizAspect = 480.0/640.0;
+
+function initBuffers() {
+  squareVerticesBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
+  
+  var vertices = [
+    1.0,  1.0,  0.0,
+    -1.0, 1.0,  0.0,
+    1.0,  -1.0, 0.0,
+    -1.0, -1.0, 0.0
+  ];
+  
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+}
+function initShaders() {
+  var fragmentShader = getShader(gl, "shader-fs");
+  var vertexShader = getShader(gl, "shader-vs");
+  
+  // Create the shader program
+  
+  shaderProgram = gl.createProgram();
+  gl.attachShader(shaderProgram, vertexShader);
+  gl.attachShader(shaderProgram, fragmentShader);
+  gl.linkProgram(shaderProgram);
+  
+  // If creating the shader program failed, alert
+  
+  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+    alert("Unable to initialize the shader program.");
+  }
+  
+  gl.useProgram(shaderProgram);
+  
+  vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+  gl.enableVertexAttribArray(vertexPositionAttribute);
+}
+function getShader(gl, id) {
+  var shaderScript = document.getElementById(id);
+  
+  if (!shaderScript) {
+    return null;
+  }
+  
+  var theSource = "";
+  var currentChild = shaderScript.firstChild;
+  
+  while(currentChild) {
+    if (currentChild.nodeType == 3) {
+      theSource += currentChild.textContent;
+    }
+    
+    currentChild = currentChild.nextSibling;
+  }
+  var shader;
+  
+  if (shaderScript.type == "x-shader/x-fragment") {
+    shader = gl.createShader(gl.FRAGMENT_SHADER);
+  } else if (shaderScript.type == "x-shader/x-vertex") {
+    shader = gl.createShader(gl.VERTEX_SHADER);
+  } else {
+    return null;  // Unknown shader type
+  }
+  gl.shaderSource(shader, theSource);
+  
+  // Compile the shader program
+  
+  gl.compileShader(shader);
+  
+  // See if it compiled successfully
+  
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    alert("An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader));
+    return null;
+  }
+  
+  return shader;
+}
 function initWebGL(canvas) {
   gl = null;
   
@@ -21,10 +101,25 @@ function initWebGL(canvas) {
     alert("Unable to initialize WebGL. Your browser may not support it.");
   }
 }
+function drawScene() {
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  
+  perspectiveMatrix = M4x4.makePerspective(45, 640.0/480.0, 0.1, 100.0);
+  
+  loadIdentity();
+  mvTranslate([-0.0, 0.0, -6.0]);
+  
+  gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
+  gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+  setMatrixUniforms();
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
 function start() {
   var canvas = document.getElementById("glcanvas");
 
   initWebGL(canvas);      // Initialize the GL context
+  initBuffers();
+  initShaders();
   
   // Only continue if WebGL is available and working
   
@@ -32,11 +127,26 @@ function start() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);                      // Set clear color to black, fully opaque
     gl.enable(gl.DEPTH_TEST);                               // Enable depth testing
     gl.depthFunc(gl.LEQUAL);                                // Near things obscure far things
-    gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);      // Clear the color as well as the depth buffer.
+    drawScene();
   }
 }
 </script>
 <body onload="start()">
+<script id="shader-fs" type="x-shader/x-fragment">
+  void main(void) {
+    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+  }
+</script>
+<script id="shader-vs" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+  
+  void main(void) {
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+  }
+</script>
   <canvas id="glcanvas" width="640" height="480">
     Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
   </canvas>
