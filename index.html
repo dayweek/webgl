@@ -7,6 +7,7 @@
     <script src="src/utils.js"></script>
     <script src="src/buffers.js"></script>
     <script src="src/shaderutils.js"></script>
+    <script src="src/textureutils.js"></script>
   </head>
   <body>
     <script>
@@ -53,7 +54,16 @@
         gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
         setMatrixUniforms();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer); 
+
+        // texture 
+        gl.bindBuffer(gl.ARRAY_BUFFER, cubeVerticesTextureCoordBuffer);
+        gl.vertexAttribPointer(textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, cubeTexture);
+        gl.uniform1i(gl.getUniformLocation(shaderProgram, "uSampler"), 0);
+
         gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+
         mvPopMatrix();
         requestAnimFrame(drawScene);
       }
@@ -63,6 +73,7 @@
         initWebGL(canvas);      // Initialize the GL context
         initBuffers();
         initShaders();
+        initTextures();
 
         // Only continue if WebGL is available and working
 
@@ -80,8 +91,10 @@
         precision highp float;
         #endif
         varying vec4 acolor;
+        varying vec2 vTextureCoord;
+        uniform sampler2D uSampler;
         void main(void) {
-          gl_FragColor = acolor;
+          gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
         }
       </script>
       <script id="shader-vs" type="x-shader/x-vertex">
@@ -90,19 +103,23 @@
         #endif
         attribute vec3 aVertexPosition;
         attribute vec4 aColorPosition;
+        attribute vec2 aTextureCoord; 
 
         uniform mat4 uMVMatrix;
         uniform mat4 uPMatrix;
 
         varying vec4 acolor;
+        varying vec2 vTextureCoord;
         void main(void) {
           acolor = aColorPosition;
           gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+          vTextureCoord = aTextureCoord; 
         }
       </script>
       <canvas id="glcanvas" width="640" height="480">
       Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
       </canvas>
+      <img id="floor" src="textures/floor_diff.png">
     </body>
   </body>
 </html>

@@ -21,6 +21,8 @@ function initShaders() {
   gl.enableVertexAttribArray(vertexPositionAttribute);
   vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aColorPosition");
   gl.enableVertexAttribArray(vertexColorAttribute);
+  textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+  gl.enableVertexAttribArray(textureCoordAttribute);
 }
 function getShader(gl, id) {
   var shaderScript = document.getElementById(id);

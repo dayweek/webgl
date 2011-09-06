@@ -84,4 +84,43 @@ function initBuffers() {
 
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
     new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
+
+    cubeVerticesTextureCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVerticesTextureCoordBuffer);
+
+    var textureCoordinates = [
+      // Front
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Back
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Top
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Bottom
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Right
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0,
+      // Left
+      0.0,  0.0,
+      1.0,  0.0,
+      1.0,  1.0,
+      0.0,  1.0
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new WebGLFloatArray(textureCoordinates),
+    gl.STATIC_DRAW);
 }
