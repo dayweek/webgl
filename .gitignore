@@ -1,6 +1,7 @@
 *.dep
 *.obj
 *.swp
+*.swo
 *.kate-swp
 *.*~
 *thumbs.db
