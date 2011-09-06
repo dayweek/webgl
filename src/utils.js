@@ -13,14 +13,14 @@ function mvPopMatrix() {
   if (!mvMatrixStack.length) {
     throw("Can't pop from an empty matrix stack.");
   }
-  
+
   mvMatrix = mvMatrixStack.pop();
   return mvMatrix;
 }
 
 function mvRotate(angle, axis) {
   var inRadians = angle * Math.PI / 180.0;
-  
+
   M4x4.rotate(inRadians, axis, mvMatrix, mvMatrix);
 }
 
@@ -45,11 +45,11 @@ function setMatrixUniforms() {
 }
 requestAnimFrame = (function() {
   return window.requestAnimationFrame ||
-     window.webkitRequestAnimationFrame ||
-     window.mozRequestAnimationFrame ||
-     window.oRequestAnimationFrame ||
-     window.msRequestAnimationFrame ||
-     function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
-       window.setTimeout(callback, 1000/60);
-     };
+  window.webkitRequestAnimationFrame ||
+  window.mozRequestAnimationFrame ||
+  window.oRequestAnimationFrame ||
+  window.msRequestAnimationFrame ||
+  function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
+    window.setTimeout(callback, 1000/60);
+  };
 })();

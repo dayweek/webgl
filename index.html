@@ -3,106 +3,106 @@
   <head>
     <meta charset="utf-8">
     <title>opengl</title>
-<script src="src/mjs.js"></script>
-<script src="src/utils.js"></script>
-<script src="src/buffers.js"></script>
-<script src="src/shaderutils.js"></script>
+    <script src="src/mjs.js"></script>
+    <script src="src/utils.js"></script>
+    <script src="src/buffers.js"></script>
+    <script src="src/shaderutils.js"></script>
   </head>
   <body>
-<script>
-var squareRotation = 0.0;  
+    <script>
+      var squareRotation = 0.0;  
 
-function initWebGL(canvas) {
-  gl = null;
-  
-  try {
-    gl = canvas.getContext("experimental-webgl");
-  }
-  catch(e) {
-  }
-  
-  // If we don't have a GL context, give up now
-  
-  if (!gl) {
-    alert("Unable to initialize WebGL. Your browser may not support it.");
-  }
-}
-function drawScene() {
-  loadIdentity();
-  mvPushMatrix();
+      function initWebGL(canvas) {
+        gl = null;
 
- //timing
-  var currentTime = (new Date).getTime();
-  if ( typeof lastSquareUpdateTime != "undefined") {
-  	var delta = currentTime - lastSquareUpdateTime;
-  	
-  	squareRotation += (30 * delta) / 1000.0;
-  }
-  
-  lastSquareUpdateTime = currentTime;
-  mvTranslate([-0.0, 0.0, -6.0]);
-  mvRotate(squareRotation, [1, 0, 1]);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  
-  perspectiveMatrix = M4x4.makePerspective(45, 640.0/480.0, 0.1, 100.0);
-  
-  
-  gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
-  gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVerticesColorBuffer);
-  gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
-  setMatrixUniforms();
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer); 
-gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
-  mvPopMatrix();
-  requestAnimFrame(drawScene);
-}
-function start() {
-  var canvas = document.getElementById("glcanvas");
+        try {
+          gl = canvas.getContext("experimental-webgl");
+        }
+        catch(e) {
+        }
 
-  initWebGL(canvas);      // Initialize the GL context
-  initBuffers();
-  initShaders();
-  
-  // Only continue if WebGL is available and working
-  
-  if (gl) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);                      // Set clear color to black, fully opaque
-    gl.enable(gl.DEPTH_TEST);                               // Enable depth testing
-    gl.depthFunc(gl.LEQUAL);                                // Near things obscure far things
-    drawScene();
-  }
-}
-</script>
-<body onload="start()">
-<script id="shader-fs" type="x-shader/x-fragment">
-#ifdef GL_ES
-precision highp float;
-#endif
-  varying vec4 acolor;
-  void main(void) {
-    gl_FragColor = acolor;
-  }
-</script>
-<script id="shader-vs" type="x-shader/x-vertex">
-#ifdef GL_ES
-precision highp float;
-#endif
-  attribute vec3 aVertexPosition;
-  attribute vec4 aColorPosition;
+        // If we don't have a GL context, give up now
 
-  uniform mat4 uMVMatrix;
-  uniform mat4 uPMatrix;
-  
-  varying vec4 acolor;
-  void main(void) {
-    acolor = aColorPosition;
-    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-  }
-</script>
-  <canvas id="glcanvas" width="640" height="480">
-    Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
-  </canvas>
-</body>
+        if (!gl) {
+          alert("Unable to initialize WebGL. Your browser may not support it.");
+        }
+      }
+      function drawScene() {
+        loadIdentity();
+        mvPushMatrix();
+
+        //timing
+        var currentTime = (new Date).getTime();
+        if ( typeof lastSquareUpdateTime != "undefined") {
+          var delta = currentTime - lastSquareUpdateTime;
+
+          squareRotation += (30 * delta) / 1000.0;
+        }
+
+        lastSquareUpdateTime = currentTime;
+        mvTranslate([-0.0, 0.0, -6.0]);
+        mvRotate(squareRotation, [1, 0, 1]);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        perspectiveMatrix = M4x4.makePerspective(45, 640.0/480.0, 0.1, 100.0);
+
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
+        gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, cubeVerticesColorBuffer);
+        gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
+        setMatrixUniforms();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVerticesIndexBuffer); 
+        gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+        mvPopMatrix();
+        requestAnimFrame(drawScene);
+      }
+      function start() {
+        var canvas = document.getElementById("glcanvas");
+
+        initWebGL(canvas);      // Initialize the GL context
+        initBuffers();
+        initShaders();
+
+        // Only continue if WebGL is available and working
+
+        if (gl) {
+          gl.clearColor(0.0, 0.0, 0.0, 1.0);                      // Set clear color to black, fully opaque
+          gl.enable(gl.DEPTH_TEST);                               // Enable depth testing
+          gl.depthFunc(gl.LEQUAL);                                // Near things obscure far things
+          drawScene();
+        }
+      }
+    </script>
+    <body onload="start()">
+      <script id="shader-fs" type="x-shader/x-fragment">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+        varying vec4 acolor;
+        void main(void) {
+          gl_FragColor = acolor;
+        }
+      </script>
+      <script id="shader-vs" type="x-shader/x-vertex">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+        attribute vec3 aVertexPosition;
+        attribute vec4 aColorPosition;
+
+        uniform mat4 uMVMatrix;
+        uniform mat4 uPMatrix;
+
+        varying vec4 acolor;
+        void main(void) {
+          acolor = aColorPosition;
+          gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        }
+      </script>
+      <canvas id="glcanvas" width="640" height="480">
+      Your browser doesn't appear to support the HTML5 <code>&lt;canvas&gt;</code> element.
+      </canvas>
+    </body>
   </body>
 </html>
