@@ -1,5 +1,17 @@
 var mvMatrixStack = [];
 
+function flatten(m) {
+  var flat = [];
+  for(var i = 1; i<5; i++) {
+    var row = m.row(i);
+    var dim = row.dimensions();
+    for(var ii= 1; ii <= dim; ii++) {
+      flat.push(row.e(ii));
+    }
+  }
+  return flat;
+}
+
 function mvPushMatrix(m) {
   if (m) {
     mvMatrixStack.push(M4x4.clone(m));
